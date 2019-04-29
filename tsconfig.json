@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "moduleResolution": "node",
+    "outDir": "./public",
+    "rootDir": "./src",
+    "strict": true,
+    "target": "esnext"
+  }
+}
