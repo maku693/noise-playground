@@ -2,9 +2,11 @@
   "name": "river",
   "version": "0.1.0",
   "devDependencies": {
-    "prettier": "^1.17.0"
+    "prettier": "^1.17.0",
+    "serve": "^11.0.0"
   },
   "scripts": {
+    "start": "serve .",
     "prettify": "prettier --write index.html"
   }
 }
