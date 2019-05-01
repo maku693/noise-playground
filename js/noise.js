@@ -54,6 +54,64 @@ export function createPerlinNoise2D(size, seed) {
   };
 }
 
+const centerToEdge3D = Object.freeze([
+  { x: 1, y: 1, z: 0 },
+  { x: -1, y: 1, z: 0 },
+  { x: 1, y: -1, z: 0 },
+  { x: -1, y: -1, z: 0 },
+  { x: 1, y: 0, z: 1 },
+  { x: -1, y: 0, z: 1 },
+  { x: 1, y: 0, z: -1 },
+  { x: -1, y: 0, z: -1 },
+  { x: 0, y: 1, z: 1 },
+  { x: 0, y: -1, z: 1 },
+  { x: 0, y: 1, z: -1 },
+  { x: 0, y: -1, z: -1 }
+]);
+export function createPerlinNoise3D(size, seed) {
+  const randomValues = createRandomValues(size, seed);
+  function rand(x, y, z) {
+    const randX = randomValues[x % randomValues.length];
+    const randY = randomValues[Math.abs(randX + y) % randomValues.length];
+    return randomValues[Math.abs(randY + z) % randomValues.length];
+  }
+  function grad(i, j, k) {
+    return centerToEdge3D[Math.abs(rand(i, j, k)) % centerToEdge3D.length];
+  }
+  return function(x, y, z) {
+    const i = Math.floor(x);
+    const i_ = i + 1;
+    const j = Math.floor(y);
+    const j_ = j + 1;
+    const k = Math.floor(z);
+    const k_ = k + 1;
+    const g000 = grad(i, j, k);
+    const g001 = grad(i, j, k_);
+    const g010 = grad(i, j_, k);
+    const g011 = grad(i, j_, k_);
+    const g100 = grad(i_, j, k);
+    const g101 = grad(i_, j, k_);
+    const g110 = grad(i_, j_, k);
+    const g111 = grad(i_, j_, k_);
+    const a000 = g000.x * (x - i) + g000.y * (y - j) + g000.z * (z - k);
+    const a001 = g001.x * (x - i) + g001.y * (y - j) + g001.z * (z - k_);
+    const a010 = g010.x * (x - i) + g010.y * (y - j_) + g010.z * (z - k);
+    const a011 = g011.x * (x - i) + g011.y * (y - j_) + g011.z * (z - k_);
+    const a100 = g100.x * (x - i_) + g100.y * (y - j) + g100.z * (z - k);
+    const a101 = g101.x * (x - i_) + g101.y * (y - j) + g101.z * (z - k_);
+    const a110 = g110.x * (x - i_) + g110.y * (y - j_) + g110.z * (z - k);
+    const a111 = g111.x * (x - i_) + g111.y * (y - j_) + g111.z * (z - k_);
+    const u = fade(x - i);
+    const v = fade(y - j);
+    const w = fade(z - k);
+    return lerp(
+      w,
+      lerp(v, lerp(u, a000, a100), lerp(u, a010, a110)),
+      lerp(v, lerp(u, a001, a101), lerp(u, a011, a111))
+    );
+  };
+}
+
 function createRandomValues(size, seed) {
   const rng = createXORShift32(seed);
   const rand = new Array(size);
