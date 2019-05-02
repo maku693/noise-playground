@@ -9,7 +9,7 @@ export function createPerlinNoise1D(size, seed) {
     return Math.sign(rand(i));
   }
   return function(x) {
-    const i = Math.floor(x);
+    const i = Math.trunc(x);
     const i_ = i + 1;
     const gi = grad(i);
     const gi_ = grad(i_);
@@ -36,9 +36,9 @@ export function createPerlinNoise2D(size, seed) {
     return centerToEdge2D[Math.abs(rand(i, j)) % centerToEdge2D.length];
   }
   return function(x, y) {
-    const i = Math.floor(x);
+    const i = Math.trunc(x);
     const i_ = i + 1;
-    const j = Math.floor(y);
+    const j = Math.trunc(y);
     const j_ = j + 1;
     const g00 = grad(i, j);
     const g01 = grad(i, j_);
@@ -79,11 +79,11 @@ export function createPerlinNoise3D(size, seed) {
     return centerToEdge3D[Math.abs(rand(i, j, k)) % centerToEdge3D.length];
   }
   return function(x, y, z) {
-    const i = Math.floor(x);
+    const i = Math.trunc(x);
     const i_ = i + 1;
-    const j = Math.floor(y);
+    const j = Math.trunc(y);
     const j_ = j + 1;
-    const k = Math.floor(z);
+    const k = Math.trunc(z);
     const k_ = k + 1;
     const g000 = grad(i, j, k);
     const g001 = grad(i, j, k_);
