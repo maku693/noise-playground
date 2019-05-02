@@ -6,7 +6,7 @@ export function createPerlinNoise1D(seed) {
     return randomValues[x % randomValues.length];
   }
   function grad(i) {
-    return Math.sign(rand(i));
+    return [1, -1][rand(i) % 2];
   }
   return function(x) {
     const i = Math.trunc(x);
@@ -30,10 +30,10 @@ export function createPerlinNoise2D(seed) {
   const randomValues = createRandomValues(seed);
   function rand(x, y) {
     const randX = randomValues[x % randomValues.length];
-    return randomValues[Math.abs(randX + y) % randomValues.length];
+    return randomValues[(randX + y) % randomValues.length];
   }
   function grad(i, j) {
-    return centerToEdge2D[Math.abs(rand(i, j)) % centerToEdge2D.length];
+    return centerToEdge2D[rand(i, j) % centerToEdge2D.length];
   }
   return function(x, y) {
     const i = Math.trunc(x);
@@ -72,11 +72,11 @@ export function createPerlinNoise3D(seed) {
   const randomValues = createRandomValues(seed);
   function rand(x, y, z) {
     const randX = randomValues[x % randomValues.length];
-    const randY = randomValues[Math.abs(randX + y) % randomValues.length];
-    return randomValues[Math.abs(randY + z) % randomValues.length];
+    const randY = randomValues[(randX + y) % randomValues.length];
+    return randomValues[(randY + z) % randomValues.length];
   }
   function grad(i, j, k) {
-    return centerToEdge3D[Math.abs(rand(i, j, k)) % centerToEdge3D.length];
+    return centerToEdge3D[rand(i, j, k) % centerToEdge3D.length];
   }
   return function(x, y, z) {
     const i = Math.trunc(x);
@@ -116,7 +116,7 @@ function createRandomValues(seed) {
   const rng = createXORShift32(seed);
   const rand = new Array(256);
   for (let i = 0; i < rand.length; i++) {
-    rand[i] = rng();
+    rand[i] = Math.abs(rng());
   }
   return rand;
 }
