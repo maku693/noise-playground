@@ -1,7 +1,7 @@
 import { createXORShift32 } from "./xorshift32.js";
 
-export function createPerlinNoise1D(size, seed) {
-  const randomValues = createRandomValues(size, seed);
+export function createPerlinNoise1D(seed) {
+  const randomValues = createRandomValues(seed);
   function rand(x) {
     return randomValues[x % randomValues.length];
   }
@@ -26,8 +26,8 @@ const centerToEdge2D = Object.freeze([
   { x: 0, y: 1 },
   { x: 0, y: -1 }
 ]);
-export function createPerlinNoise2D(size, seed) {
-  const randomValues = createRandomValues(size, seed);
+export function createPerlinNoise2D(seed) {
+  const randomValues = createRandomValues(seed);
   function rand(x, y) {
     const randX = randomValues[x % randomValues.length];
     return randomValues[Math.abs(randX + y) % randomValues.length];
@@ -68,8 +68,8 @@ const centerToEdge3D = Object.freeze([
   { x: 0, y: 1, z: -1 },
   { x: 0, y: -1, z: -1 }
 ]);
-export function createPerlinNoise3D(size, seed) {
-  const randomValues = createRandomValues(size, seed);
+export function createPerlinNoise3D(seed) {
+  const randomValues = createRandomValues(seed);
   function rand(x, y, z) {
     const randX = randomValues[x % randomValues.length];
     const randY = randomValues[Math.abs(randX + y) % randomValues.length];
@@ -112,9 +112,9 @@ export function createPerlinNoise3D(size, seed) {
   };
 }
 
-function createRandomValues(size, seed) {
+function createRandomValues(seed) {
   const rng = createXORShift32(seed);
-  const rand = new Array(size);
+  const rand = new Array(256);
   for (let i = 0; i < rand.length; i++) {
     rand[i] = rng();
   }

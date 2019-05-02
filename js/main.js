@@ -7,7 +7,7 @@ import {
 {
   const canvas = document.createElement("canvas");
   const ctx = canvas.getContext("2d");
-  const noise = createPerlinNoise1D(10);
+  const noise = createPerlinNoise1D();
 
   document.body.appendChild(canvas);
 
@@ -22,7 +22,7 @@ import {
 {
   const canvas = document.createElement("canvas");
   const ctx = canvas.getContext("2d");
-  const noise = createPerlinNoise2D(100);
+  const noise = createPerlinNoise2D();
 
   document.body.appendChild(canvas);
 
@@ -39,7 +39,7 @@ import {
 {
   const canvas = document.createElement("canvas");
   const ctx = canvas.getContext("2d");
-  const noise = createPerlinNoise3D(100);
+  const noise = createPerlinNoise3D();
 
   document.body.appendChild(canvas);
 
