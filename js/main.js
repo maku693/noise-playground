@@ -21,12 +21,12 @@ import {
 
 {
   const canvas = document.createElement("canvas");
+  canvas.width = canvas.height = 256;
   const ctx = canvas.getContext("2d");
-  const noise = createPerlinNoise2D();
+  const noise = createPerlinNoise2D(32, 8);
 
   document.body.appendChild(canvas);
 
-  const scale = 25;
   const octaves = 4;
   const persistence = 1 / 2;
   for (let x = 0; x < canvas.width; x++) {
@@ -35,8 +35,8 @@ import {
       for (let octave = 0; octave < octaves; octave++) {
         const frequency = Math.pow(2, octave);
         const amplitude = Math.pow(persistence, octave);
-        const x_ = (x * frequency) / scale;
-        const y_ = (y * frequency) / scale;
+        const x_ = x * frequency;
+        const y_ = y * frequency;
         a += noise(x_, y_) * amplitude;
       }
       a = a / octaves + 0.5;

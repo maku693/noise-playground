@@ -26,7 +26,7 @@ const centerToEdge2D = Object.freeze([
   { x: 0, y: 1 },
   { x: 0, y: -1 }
 ]);
-export function createPerlinNoise2D(seed) {
+export function createPerlinNoise2D(cellSize, repeat, seed) {
   const randomValues = createRandomValues(seed);
   function rand(x, y) {
     const randX = randomValues[x % randomValues.length];
@@ -36,20 +36,24 @@ export function createPerlinNoise2D(seed) {
     return centerToEdge2D[rand(i, j) % centerToEdge2D.length];
   }
   return function(x, y) {
-    const i = Math.trunc(x);
-    const i_ = i + 1;
-    const j = Math.trunc(y);
-    const j_ = j + 1;
+    const x_ = (x / cellSize) % repeat;
+    const y_ = (y / cellSize) % repeat;
+    const i = Math.trunc(x_);
+    const i_ = (i + 1) % repeat;
+    const j = Math.trunc(y_);
+    const j_ = (j + 1) % repeat;
+    const xf = x_ - i;
+    const yf = y_ - j;
+    const u = fade(xf);
+    const v = fade(yf);
     const g00 = grad(i, j);
     const g01 = grad(i, j_);
     const g10 = grad(i_, j);
     const g11 = grad(i_, j_);
-    const a00 = g00.x * (x - i) + g00.y * (y - j);
-    const a01 = g01.x * (x - i) + g01.y * (y - j_);
-    const a10 = g10.x * (x - i_) + g10.y * (y - j);
-    const a11 = g11.x * (x - i_) + g11.y * (y - j_);
-    const u = fade(x - i);
-    const v = fade(y - j);
+    const a00 = g00.x * xf + g00.y * yf;
+    const a01 = g01.x * xf + g01.y * (yf - 1);
+    const a10 = g10.x * (xf - 1) + g10.y * yf;
+    const a11 = g11.x * (xf - 1) + g11.y * (yf - 1);
     return lerp(v, lerp(u, a00, a10), lerp(u, a01, a11));
   };
 }
