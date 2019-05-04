@@ -1,6 +1,6 @@
 import { createXORShift32 } from "./xorshift32.js";
 
-export function createPerlinNoise1D(seed) {
+export function createPerlinNoise1D(cellSize, repeat, seed) {
   const randomValues = createRandomValues(seed);
   function rand(x) {
     return randomValues[x % randomValues.length];
@@ -9,13 +9,15 @@ export function createPerlinNoise1D(seed) {
     return [1, -1][rand(i) % 2];
   }
   return function(x) {
-    const i = Math.trunc(x);
-    const i_ = i + 1;
+    const x_ = (x / cellSize) % repeat;
+    const i = Math.trunc(x_);
+    const i_ = (i + 1) % repeat;
+    const xf = x_ - i;
+    const u = fade(xf);
     const gi = grad(i);
     const gi_ = grad(i_);
-    const a0 = gi * (x - i);
-    const a1 = gi_ * (x - i_);
-    const u = fade(x - i);
+    const a0 = gi * xf;
+    const a1 = gi_ * (xf - 1);
     return lerp(u, a0, a1);
   };
 }
