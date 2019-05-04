@@ -26,10 +26,20 @@ import {
 
   document.body.appendChild(canvas);
 
-  const scale = 0.1;
+  const scale = 25;
+  const octaves = 4;
+  const persistence = 1 / 2;
   for (let x = 0; x < canvas.width; x++) {
     for (let y = 0; y < canvas.height; y++) {
-      const a = noise(x * scale, y * scale) + 0.5;
+      let a = 0;
+      for (let octave = 0; octave < octaves; octave++) {
+        const frequency = Math.pow(2, octave);
+        const amplitude = Math.pow(persistence, octave);
+        const x_ = (x * frequency) / scale;
+        const y_ = (y * frequency) / scale;
+        a += noise(x_, y_) * amplitude;
+      }
+      a = a / octaves + 0.5;
       ctx.fillStyle = `rgba(0, 0, 0, ${a})`;
       ctx.fillRect(x, y, 1, 1);
     }
