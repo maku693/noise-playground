@@ -74,7 +74,7 @@ const centerToEdge3D = Object.freeze([
   { x: 0, y: 1, z: -1 },
   { x: 0, y: -1, z: -1 }
 ]);
-export function createPerlinNoise3D(seed) {
+export function createPerlinNoise3D(cellSize, repeat, seed) {
   const randomValues = createRandomValues(seed);
   function rand(x, y, z) {
     const randX = randomValues[x % randomValues.length];
@@ -85,12 +85,21 @@ export function createPerlinNoise3D(seed) {
     return centerToEdge3D[rand(i, j, k) % centerToEdge3D.length];
   }
   return function(x, y, z) {
-    const i = Math.trunc(x);
-    const i_ = i + 1;
-    const j = Math.trunc(y);
-    const j_ = j + 1;
-    const k = Math.trunc(z);
-    const k_ = k + 1;
+    const x_ = (x / cellSize) % repeat;
+    const y_ = (y / cellSize) % repeat;
+    const z_ = (z / cellSize) % repeat;
+    const i = Math.trunc(x_);
+    const i_ = (i + 1) % repeat;
+    const j = Math.trunc(y_);
+    const j_ = (j + 1) % repeat;
+    const k = Math.trunc(z_);
+    const k_ = (k + 1) % repeat;
+    const xf = x_ - i;
+    const yf = y_ - j;
+    const zf = z_ - k;
+    const u = fade(xf);
+    const v = fade(yf);
+    const w = fade(zf);
     const g000 = grad(i, j, k);
     const g001 = grad(i, j, k_);
     const g010 = grad(i, j_, k);
@@ -99,17 +108,14 @@ export function createPerlinNoise3D(seed) {
     const g101 = grad(i_, j, k_);
     const g110 = grad(i_, j_, k);
     const g111 = grad(i_, j_, k_);
-    const a000 = g000.x * (x - i) + g000.y * (y - j) + g000.z * (z - k);
-    const a001 = g001.x * (x - i) + g001.y * (y - j) + g001.z * (z - k_);
-    const a010 = g010.x * (x - i) + g010.y * (y - j_) + g010.z * (z - k);
-    const a011 = g011.x * (x - i) + g011.y * (y - j_) + g011.z * (z - k_);
-    const a100 = g100.x * (x - i_) + g100.y * (y - j) + g100.z * (z - k);
-    const a101 = g101.x * (x - i_) + g101.y * (y - j) + g101.z * (z - k_);
-    const a110 = g110.x * (x - i_) + g110.y * (y - j_) + g110.z * (z - k);
-    const a111 = g111.x * (x - i_) + g111.y * (y - j_) + g111.z * (z - k_);
-    const u = fade(x - i);
-    const v = fade(y - j);
-    const w = fade(z - k);
+    const a000 = g000.x * xf + g000.y * yf + g000.z * zf;
+    const a001 = g001.x * xf + g001.y * yf + g001.z * (zf - 1);
+    const a010 = g010.x * xf + g010.y * (yf - 1) + g010.z * zf;
+    const a011 = g011.x * xf + g011.y * (yf - 1) + g011.z * (zf - 1);
+    const a100 = g100.x * (xf - 1) + g100.y * yf + g100.z * zf;
+    const a101 = g101.x * (xf - 1) + g101.y * yf + g101.z * (zf - 1);
+    const a110 = g110.x * (xf - 1) + g110.y * (yf - 1) + g110.z * zf;
+    const a111 = g111.x * (xf - 1) + g111.y * (yf - 1) + g111.z * (zf - 1);
     return lerp(
       w,
       lerp(v, lerp(u, a000, a100), lerp(u, a010, a110)),

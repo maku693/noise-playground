@@ -49,20 +49,16 @@ import {
 {
   const canvas = document.createElement("canvas");
   const ctx = canvas.getContext("2d");
-  const noise = createPerlinNoise3D();
+  const noise = createPerlinNoise3D(30, 10);
 
   document.body.appendChild(canvas);
 
-  const scale1 = 0.01;
-  const scale2 = 0.03;
   const imageData = ctx.createImageData(canvas.width, canvas.height);
   for (let x = 0; x < canvas.width; x++) {
     for (let y = 0; y < canvas.height; y++) {
-      const i = x + y * canvas.width;
-      const n1 = noise(x * scale1, y * scale1, 0) + 0.5;
-      const n2 = noise(x * scale2, y * scale2, 0) * 0.1 + 0.6;
-      const a = n1 * n2;
-      imageData.data[i * 4 + 3] = a * 255;
+      const i = (x + y * canvas.width) * 4 + 3;
+      const a = noise(x, y, 0) * 0.5 + 0.5;
+      imageData.data[i] = a * 255;
     }
   }
   ctx.putImageData(imageData, 0, 0);
