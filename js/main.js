@@ -48,18 +48,30 @@ import {
 
 {
   const canvas = document.createElement("canvas");
-  const ctx = canvas.getContext("2d");
-  const noise = createPerlinNoise3D(30, 10);
-
   document.body.appendChild(canvas);
 
-  const imageData = ctx.createImageData(canvas.width, canvas.height);
-  for (let x = 0; x < canvas.width; x++) {
-    for (let y = 0; y < canvas.height; y++) {
-      const i = (x + y * canvas.width) * 4 + 3;
-      const a = noise(x, y, 0) * 0.5 + 0.5;
-      imageData.data[i] = a * 255;
+  const ctx = canvas.getContext("2d");
+
+  const zInput = document.createElement("input");
+  document.body.appendChild(zInput);
+  zInput.type = "number";
+  zInput.value = 0;
+
+  const noise = createPerlinNoise3D(15, 10);
+
+  function render() {
+    const z = parseFloat(zInput.value);
+    const imageData = ctx.createImageData(canvas.width, canvas.height);
+    for (let x = 0; x < canvas.width; x++) {
+      for (let y = 0; y < canvas.height; y++) {
+        const i = (x + y * canvas.width) * 4 + 3;
+        const a = noise(x, y, z) * 0.5 + 0.5;
+        imageData.data[i] = a * 255;
+      }
     }
+    ctx.putImageData(imageData, 0, 0);
   }
-  ctx.putImageData(imageData, 0, 0);
+
+  zInput.addEventListener("change", render);
+  render();
 }
