@@ -3,15 +3,15 @@ import { createXORShift32 } from "./xorshift32.js";
 export function createPerlinNoise1D(cellSize, repeat, seed) {
   const randomValues = createRandomValues(seed);
   function rand(x) {
-    return randomValues[x % randomValues.length];
+    return randomValues[Math.abs(x) % randomValues.length];
   }
   function grad(i) {
     return [1, -1][rand(i) % 2];
   }
   return function(x) {
     const x_ = (x / cellSize) % repeat;
-    const i = Math.trunc(x_);
-    const i_ = (i + 1) % repeat;
+    const i = Math.floor(x_) % repeat;
+    const i_ = Math.ceil(x_) % repeat;
     const xf = x_ - i;
     const u = fade(xf);
     const gi = grad(i);
@@ -31,8 +31,10 @@ const centerToEdge2D = Object.freeze([
 export function createPerlinNoise2D(cellSize, repeat, seed) {
   const randomValues = createRandomValues(seed);
   function rand(x, y) {
-    const randX = randomValues[x % randomValues.length];
-    return randomValues[(randX + y) % randomValues.length];
+    const x_ = Math.abs(x);
+    const y_ = Math.abs(y);
+    const randX = randomValues[x_ % randomValues.length];
+    return randomValues[(randX + y_) % randomValues.length];
   }
   function grad(i, j) {
     return centerToEdge2D[rand(i, j) % centerToEdge2D.length];
@@ -40,12 +42,12 @@ export function createPerlinNoise2D(cellSize, repeat, seed) {
   return function(x, y) {
     const x_ = (x / cellSize) % repeat;
     const y_ = (y / cellSize) % repeat;
-    const i = Math.trunc(x_);
-    const i_ = (i + 1) % repeat;
-    const j = Math.trunc(y_);
-    const j_ = (j + 1) % repeat;
-    const xf = x_ - i;
-    const yf = y_ - j;
+    const i = Math.floor(x_) % repeat;
+    const i_ = Math.ceil(x_) % repeat;
+    const j = Math.floor(y_) % repeat;
+    const j_ = Math.ceil(y_) % repeat;
+    const xf = x_ - Math.floor(x_);
+    const yf = y_ - Math.floor(y_);
     const u = fade(xf);
     const v = fade(yf);
     const g00 = grad(i, j);
@@ -77,9 +79,12 @@ const centerToEdge3D = Object.freeze([
 export function createPerlinNoise3D(cellSize, repeat, seed) {
   const randomValues = createRandomValues(seed);
   function rand(x, y, z) {
-    const randX = randomValues[x % randomValues.length];
-    const randY = randomValues[(randX + y) % randomValues.length];
-    return randomValues[(randY + z) % randomValues.length];
+    const x_ = Math.abs(x);
+    const y_ = Math.abs(y);
+    const z_ = Math.abs(z);
+    const randX = randomValues[x_ % randomValues.length];
+    const randY = randomValues[(randX + y_) % randomValues.length];
+    return randomValues[(randY + z_) % randomValues.length];
   }
   function grad(i, j, k) {
     return centerToEdge3D[rand(i, j, k) % centerToEdge3D.length];
@@ -88,15 +93,15 @@ export function createPerlinNoise3D(cellSize, repeat, seed) {
     const x_ = (x / cellSize) % repeat;
     const y_ = (y / cellSize) % repeat;
     const z_ = (z / cellSize) % repeat;
-    const i = Math.trunc(x_);
-    const i_ = (i + 1) % repeat;
-    const j = Math.trunc(y_);
-    const j_ = (j + 1) % repeat;
-    const k = Math.trunc(z_);
-    const k_ = (k + 1) % repeat;
-    const xf = x_ - i;
-    const yf = y_ - j;
-    const zf = z_ - k;
+    const i = Math.floor(x_) % repeat;
+    const i_ = Math.ceil(x_) % repeat;
+    const j = Math.floor(y_) % repeat;
+    const j_ = Math.ceil(y_) % repeat;
+    const k = Math.floor(z_) % repeat;
+    const k_ = Math.ceil(z_) % repeat;
+    const xf = x_ - Math.floor(x_);
+    const yf = y_ - Math.floor(y_);
+    const zf = z_ - Math.floor(z_);
     const u = fade(xf);
     const v = fade(yf);
     const w = fade(zf);
